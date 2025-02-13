@@ -11,6 +11,11 @@
             margin: 0;
             background-color: #ffccd5;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
         canvas {
             display: block;
@@ -36,20 +41,46 @@
             font-size: 18px;
             border: none;
             cursor: pointer;
-            background: #ff4d6d;
+            background: #eb2b4e;
             color: white;
             border-radius: 5px;
+        }
+        .title {
+            font-size: 80px;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+            display: flex;
+            gap: 10px;
+        }
+        .letter {
+            opacity: 0.3;
         }
     </style>
 </head>
 <body>
+    <div class="title">
+        <span class="letter">H</span>
+        <span class="letter">O</span>
+        <span class="letter">L</span>
+        <span class="letter">A</span>
+    </div>
     <div id="modal" class="modal">
-        <p>¿Quieres ser mi San Valentín? 💖</p>
-        <button onclick="startAnimation()">>Boff! 🥵🥵🥵🥵</button>
+        <p>¿Quieres ser mi San Valentín? 🥵🥵🥵🥵</p>
+        <button onclick="startAnimation()">Boff! 🥵🥵🥵🥵</button>
     </div>
     <script>
-        let animationStarted = false;
+        // Animación de luces en el título
+        gsap.to(".letter", {
+            opacity: 1,
+            repeat: -1,
+            yoyo: true,
+            stagger: 0.3,
+            duration: 0.5,
+            ease: "power1.inOut"
+        });
 
+        let animationStarted = false;
         function startAnimation() {
             document.getElementById('modal').style.display = 'none';
             if (animationStarted) return;
@@ -66,7 +97,6 @@
             const textureLoader = new THREE.TextureLoader();
             const petaloTexture = textureLoader.load('./Larry y Samir.jpeg');
 
-
             // Crear partículas de pétalos
             const particles = new THREE.Group();
             for (let i = 0; i < 50; i++) {
@@ -81,7 +111,6 @@
                 particles.add(petalo);
             }
             scene.add(particles);
-
             camera.position.z = 5;
 
             // Animación de caída con GSAP
