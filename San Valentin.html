@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores Flotantes 3D - San Valentín</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #ffccd5;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            flex-direction: column;
+            text-align: center;
+        }
+        .modal button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            background: #ff4d6d;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="modal" class="modal">
+        <p>¿Quieres ser mi San Valentín? 💖</p>
+        <button onclick="startAnimation()">Sí, claro! 😍</button>
+    </div>
+    <script>
+        let animationStarted = false;
+
+        function startAnimation() {
+            document.getElementById('modal').style.display = 'none';
+            if (animationStarted) return;
+            animationStarted = true;
+            
+            // Escena
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Cargar textura de pétalo
+            const textureLoader = new THREE.TextureLoader();
+            const petaloTexture = textureLoader.load('./Larry y Samir.jpeg');
+
+
+            // Crear partículas de pétalos
+            const particles = new THREE.Group();
+            for (let i = 0; i < 50; i++) {
+                const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+                const material = new THREE.MeshBasicMaterial({ map: petaloTexture, transparent: true });
+                const petalo = new THREE.Mesh(geometry, material);
+                petalo.position.set(
+                    (Math.random() - 0.5) * 10,
+                    Math.random() * 5,
+                    (Math.random() - 0.5) * 10
+                );
+                particles.add(petalo);
+            }
+            scene.add(particles);
+
+            camera.position.z = 5;
+
+            // Animación de caída con GSAP
+            particles.children.forEach(petalo => {
+                gsap.to(petalo.position, {
+                    y: -5,
+                    duration: Math.random() * 3 + 2,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "power1.inOut",
+                    delay: Math.random() * 2
+                });
+            });
+
+            // Render loop
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.001;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Ajustar tamaño al redimensionar
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            });
+        }
+    </script>
+</body>
+</html>
