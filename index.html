@@ -1,145 +1,201 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flores Flotantes 3D - San Valentín</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            background-color: #ffccd5;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-        canvas {
-            display: block;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 24px;
-            flex-direction: column;
-            text-align: center;
-        }
-        .modal button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            background: #eb2b4e;
-            color: white;
-            border-radius: 5px;
-        }
-        .title {
-            font-size: 80px;
-            font-weight: bold;
-            color: #fff;
-            text-transform: uppercase;
-            display: flex;
-            gap: 10px;
-        }
-        .letter {
-            opacity: 0.3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flores Flotantes 3D - Pa' los Parceros</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #ffccd5;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    canvas {
+      display: block;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      flex-direction: column;
+      text-align: center;
+      z-index: 2;
+    }
+    .modal button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      background: #ff4d6d;
+      color: white;
+      border-radius: 5px;
+    }
+    .title {
+      font-size: 80px;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+      display: flex;
+      gap: 10px;
+      position: relative;
+      z-index: 3;
+    }
+    .letter {
+      opacity: 0.3;
+    }
+    .flower-container {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      font-size: 50px;
+    }
+  </style>
 </head>
 <body>
+  <div id="modal" class="modal">
+    <div class="flower-container" id="flowerContainer">🌹</div>
     <div class="title">
-        <span class="letter">H</span>
-        <span class="letter">O</span>
-        <span class="letter">L</span>
-        <span class="letter">A</span>
+      <span class="letter">H</span>
+      <span class="letter">O</span>
+      <span class="letter">L</span>
+      <span class="letter">A</span>
     </div>
-    <div id="modal" class="modal">
-        <p>¿Quieres ser mi San Valentín? 🥵🥵🥵🥵</p>
-        <button onclick="startAnimation()">Boff! 🥵🥵🥵🥵</button>
-    </div>
-    <script>
-        // Animación de luces en el título
-        gsap.to(".letter", {
-            opacity: 1,
-            repeat: -1,
-            yoyo: true,
-            stagger: 0.3,
-            duration: 0.5,
-            ease: "power1.inOut"
+    <p>Oe ¿qué? ¿Te animás o qué? 🌹</p>
+    <button onclick="startAnimation()">¡De una! 🤙</button>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      gsap.to(".letter", {
+        opacity: 1,
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.3,
+        duration: 0.5,
+        ease: "power1.inOut"
+      });
+    });
+
+    let animationStarted = false;
+    function startAnimation() {
+      document.getElementById('modal').style.display = 'none';
+      if (animationStarted) return;
+      animationStarted = true;
+
+      // Crear escena, cámara y renderizador
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Agregar luces
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      // Crear tallo con efecto taper
+      const stemGeometry = new THREE.CylinderGeometry(0.03, 0.05, 1.5, 32);
+      const stemMaterial = new THREE.MeshLambertMaterial({ color: 0x2E8B57 });
+      const stem = new THREE.Mesh(stemGeometry, stemMaterial);
+      stem.position.y = -0.75;
+      scene.add(stem);
+
+      // Función mejorada para crear un pétalo usando LatheGeometry
+      function createPetal() {
+        const points = [];
+        points.push(new THREE.Vector2(0, 0));
+        points.push(new THREE.Vector2(0.08, 0.15));
+        points.push(new THREE.Vector2(0.12, 0.3));
+        points.push(new THREE.Vector2(0.1, 0.45));
+        points.push(new THREE.Vector2(0.05, 0.55));
+        points.push(new THREE.Vector2(0, 0.6));
+        const geometry = new THREE.LatheGeometry(points, 20);
+        geometry.rotateZ(Math.PI / 2);
+        const material = new THREE.MeshPhongMaterial({
+          color: 0xff69b4,
+          shininess: 50,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.9
         });
+        return new THREE.Mesh(geometry, material);
+      }
 
-        let animationStarted = false;
-        function startAnimation() {
-            document.getElementById('modal').style.display = 'none';
-            if (animationStarted) return;
-            animationStarted = true;
-            
-            // Escena
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+      // Crear y posicionar pétalos alrededor del centro de la flor
+      const numPetals = 6;
+      const petals = [];
+      for (let i = 0; i < numPetals; i++) {
+        const petal = createPetal();
+        const angle = (i / numPetals) * Math.PI * 2;
+        petal.position.set(Math.cos(angle) * 0.35, 0.6, Math.sin(angle) * 0.35);
+        petal.rotation.y = angle;
+        petal.rotation.z = (Math.random() - 0.5) * 0.2;
+        petals.push(petal);
+        scene.add(petal);
+      }
 
-            // Cargar textura de pétalo
-            const textureLoader = new THREE.TextureLoader();
-            const petaloTexture = textureLoader.load('./Larry y Samir.jpeg');
+      // Crear centro de la flor (semilla) – inicialmente una esfera
+      const centerGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+      const centerMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+      const center = new THREE.Mesh(centerGeometry, centerMaterial);
+      center.position.y = 0.6;
+      scene.add(center);
 
-            // Crear partículas de pétalos
-            const particles = new THREE.Group();
-            for (let i = 0; i < 50; i++) {
-                const geometry = new THREE.PlaneGeometry(0.5, 0.5);
-                const material = new THREE.MeshBasicMaterial({ map: petaloTexture, transparent: true });
-                const petalo = new THREE.Mesh(geometry, material);
-                petalo.position.set(
-                    (Math.random() - 0.5) * 10,
-                    Math.random() * 5,
-                    (Math.random() - 0.5) * 10
-                );
-                particles.add(petalo);
-            }
-            scene.add(particles);
-            camera.position.z = 5;
+      // Posicionar la cámara
+      camera.position.z = 2;
+      camera.position.y = 0.5;
 
-            // Animación de caída con GSAP
-            particles.children.forEach(petalo => {
-                gsap.to(petalo.position, {
-                    y: -5,
-                    duration: Math.random() * 3 + 2,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "power1.inOut",
-                    delay: Math.random() * 2
-                });
-            });
+      // Loop de animación
+      function animate() {
+        requestAnimationFrame(animate);
+        scene.rotation.y += 0.001;
+        renderer.render(scene, camera);
+      }
+      animate();
 
-            // Render loop
-            function animate() {
-                requestAnimationFrame(animate);
-                particles.rotation.y += 0.001;
-                renderer.render(scene, camera);
-            }
-            animate();
+      // Animar pétalos rebotando y cayendo con GSAP
+      petals.forEach(petal => {
+        gsap.to(petal.position, {
+          y: -2,
+          duration: 2,
+          ease: "bounce.out",
+          delay: Math.random() * 2 + 1
+        });
+      });
 
-            // Ajustar tamaño al redimensionar
-            window.addEventListener('resize', () => {
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-            });
-        }
-    </script>
+      // Después de que caigan los pétalos, reemplazar el centro con la imagen "Larry_y_Samir.jpeg"
+      gsap.delayedCall(4, () => {
+        scene.remove(center);
+        const textureLoader = new THREE.TextureLoader();
+        const photoTexture = textureLoader.load('Larry y Samir.jpeg'); // Asegúrate de que el archivo se llame así y esté en la carpeta correcta
+        const photoMaterial = new THREE.MeshBasicMaterial({ map: photoTexture, transparent: true });
+        // Aumentar el tamaño del plano para que la imagen sea más grande (1x1 en lugar de 0.5x0.5)
+        const photoGeometry = new THREE.PlaneGeometry(1, 1);
+        const photoMesh = new THREE.Mesh(photoGeometry, photoMaterial);
+        photoMesh.position.y = 0.6;
+        scene.add(photoMesh);
+      });
+    }
+  </script>
 </body>
 </html>
